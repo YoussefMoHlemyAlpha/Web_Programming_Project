@@ -8,7 +8,7 @@ export const orderSchema = Schema({
   },
   status: {
     type: String,
-    enum: ["pending","Preparing", "onTheWay", "delivered", "cancelled"],
+    enum: ["pending", "Preparing", "onTheWay", "delivered", "cancelled"],
     default: "pending",
     required: true,
   },
@@ -44,5 +44,5 @@ export const orderSchema = Schema({
   ],
 
 
-},{timestamps:true})
+}, { timestamps: true })
 export const OrderModel = model("order", orderSchema);
