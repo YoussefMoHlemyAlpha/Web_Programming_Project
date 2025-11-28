@@ -6,10 +6,11 @@ import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState("orders");
+  const [activeTab, setActiveTab] = useState("stats");
 
   // Data States
   const [orders, setOrders] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState(null);
   const [categories, setCategories] = useState([]);
 
   // Form State for New Item
@@ -43,6 +44,7 @@ const AdminDashboard = () => {
     if (user) {
       if (user.role === "admin") {
         fetchCategories();
+        fetchDashboardStats();
       } else {
         navigate("/menu"); // Redirect non-admins
       }
@@ -57,6 +59,16 @@ const AdminDashboard = () => {
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders");
+    }
+  };
+
+  // Fetch dashboard statistics for admin sales report
+  const fetchDashboardStats = async () => {
+    try {
+      const res = await apiClient.get("/reports/dashboard");
+      setDashboardStats(res.data);
+    } catch (err) {
+      console.error("Error fetching dashboard stats", err);
     }
   };
 
@@ -195,6 +207,12 @@ const AdminDashboard = () => {
       {isAdmin && (
         <div className="admin-tabs">
           <button
+            className={activeTab === "stats" ? "active" : ""}
+            onClick={() => setActiveTab("stats")}
+          >
+            Stats
+          </button>
+          <button
             className={activeTab === "orders" ? "active" : ""}
             onClick={() => setActiveTab("orders")}
           >
@@ -259,6 +277,43 @@ const AdminDashboard = () => {
       )}
 
       {/* --- TAB 2: MENU MANAGEMENT (The part you asked for) --- */}
+      {activeTab === "stats" && isAdmin && (
+        <div className="stats-grid">
+          {dashboardStats && (
+            <>
+              <div className="stat-card">
+                <h3>Total Revenue</h3>
+                <p>${dashboardStats.totalRevenue.toFixed(2)}</p>
+              </div>
+              <div className="stat-card">
+                <h3>Total Orders</h3>
+                <p>{dashboardStats.totalOrders}</p>
+              </div>
+              <div className="stat-card warning">
+                <h3>Pending Orders</h3>
+                <p>{dashboardStats.pendingOrders}</p>
+              </div>
+              <div className="stat-card">
+                <h3>Daily Stats</h3>
+                <table className="orders-table">
+                  <thead>
+                    <tr><th>Date</th><th>Revenue</th><th>Orders</th></tr>
+                  </thead>
+                  <tbody>
+                    {dashboardStats.dailyStats.map((d, i) => (
+                      <tr key={i}>
+                        <td>{d._id}</td>
+                        <td>${d.dailyRevenue.toFixed(2)}</td>
+                        <td>{d.orderCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+      )}
       {activeTab === "menu" && isAdmin && (
         <div className="menu-management">
           <div className="form-card">

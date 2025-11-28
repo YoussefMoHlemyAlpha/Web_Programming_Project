@@ -5,7 +5,19 @@ import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password, phone, address } = req.body;
-
+        // Validate first and last name length
+        if (firstName.length < 3) {
+            return res.status(400).json({ message: "First name must be at least 3 characters long" });
+        }
+        if (lastName.length < 3) {
+            return res.status(400).json({ message: "Last name must be at least 3 characters long" });
+        }
+        if(password.length < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters long" });
+        }
+        if(password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
