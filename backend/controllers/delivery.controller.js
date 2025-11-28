@@ -6,10 +6,14 @@ export const createDeliveryMan = async (req, res) => {
   try {
     const { name, phone, email, password, confirmPassword } = req.body;
 
-    // Validate passwords match
+    // match password and confirm password
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
+    if(phone.length !== 11) {
+        return res.status(400).json({ message: "Phone number must be 11 digits long" });
+    }
+    
 
     // Hash password
     const bcrypt = await import("bcryptjs");

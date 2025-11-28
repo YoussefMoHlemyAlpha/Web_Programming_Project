@@ -18,6 +18,9 @@ export const register = async (req, res) => {
         if(password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
         }
+        if(phone.length !== 11) {
+            return res.status(400).json({ message: "Phone number must be 11 digits long" });
+        }
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
