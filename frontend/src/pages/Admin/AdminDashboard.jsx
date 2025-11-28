@@ -169,6 +169,26 @@ const AdminDashboard = () => {
     }
   };
 
+  // --- HANDLE DOWNLOAD PDF ---
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await apiClient.get('/reports/export-pdf', {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'dashboard_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading PDF", error);
+      alert("Failed to download PDF report");
+    }
+  };
+
   // --- HANDLE ADD DELIVERY MAN ---
   const handleAddDeliveryMan = async (e) => {
     e.preventDefault();
@@ -281,15 +301,38 @@ const AdminDashboard = () => {
         <div className="stats-grid">
           {dashboardStats && (
             <>
+              <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+                <button
+                  onClick={handleDownloadPDF}
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: 'var(--secondary-color)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 'var(--radius)',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: 'var(--shadow)'
+                  }}
+                >
+                  <span>📄</span> Download PDF Report
+                </button>
+              </div>
               <div className="stat-card">
+                <div className="stat-card-icon">💰</div>
                 <h3>Total Revenue</h3>
                 <p>${dashboardStats.totalRevenue.toFixed(2)}</p>
               </div>
               <div className="stat-card">
+                <div className="stat-card-icon">📦</div>
                 <h3>Total Orders</h3>
                 <p>{dashboardStats.totalOrders}</p>
               </div>
               <div className="stat-card warning">
+                <div className="stat-card-icon">⏳</div>
                 <h3>Pending Orders</h3>
                 <p>{dashboardStats.pendingOrders}</p>
               </div>
@@ -309,6 +352,21 @@ const AdminDashboard = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="stat-card" style={{ gridColumn: "span 2", alignItems: "stretch", textAlign: "left" }}>
+                <h3 style={{ textAlign: "center", marginBottom: "20px" }}>Top Selling Items</h3>
+                <ul className="top-selling-list">
+                  {dashboardStats.topSellingItems?.map((item, index) => (
+                    <li key={index} className="top-selling-item">
+                      <span className="item-rank">#{index + 1}</span>
+                      <span className="item-name">{item._id}</span>
+                      <span className="item-sold">{item.totalSold} sold</span>
+                    </li>
+                  ))}
+                  {(!dashboardStats.topSellingItems || dashboardStats.topSellingItems.length === 0) && (
+                    <li style={{ padding: '10px 0', color: '#888', textAlign: 'center' }}>No sales data yet.</li>
+                  )}
+                </ul>
               </div>
             </>
           )}
