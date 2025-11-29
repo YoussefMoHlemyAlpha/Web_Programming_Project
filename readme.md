@@ -81,6 +81,7 @@ A full-stack web application for ordering food, designed to streamline the proce
 │   ├── models/             # Mongoose schemas
 │   ├── routes/             # API endpoints
 │   ├── middleware/         # Auth & other middleware
+│   ├── tests/              # Unit tests
 │   └── ...
 ├── frontend/               # React Frontend
 │   ├── src/
@@ -90,3 +91,33 @@ A full-stack web application for ordering food, designed to streamline the proce
 │   │   └── ...
 └── package.json            # Root configuration & scripts
 ```
+
+## 🧪 Testing
+
+The backend includes comprehensive unit tests for all controllers using **Jest** and **Supertest**.
+
+### Running Tests
+
+```bash
+cd backend
+npm test
+```
+
+### Test Coverage
+
+- **39 passing tests** across 6 test suites
+- **Controllers tested**:
+  - `auth.controller.js` - Authentication (register, login, getProfile)
+  - `delivery.controller.js` - Delivery management
+  - `menu.controller.js` - Menu item operations
+  - `order.controller.js` - Order processing
+  - `review.controller.js` - Review management
+  - `report.controller.js` - Dashboard statistics and PDF generation
+
+### Test Features
+
+- ✅ ES Module support with `jest.unstable_mockModule`
+- ✅ Mocked database models for isolated testing
+- ✅ Success and error case coverage
+- ✅ Edge case validation
+
